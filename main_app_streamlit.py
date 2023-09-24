@@ -6,10 +6,13 @@ import sql_db
 from prompts.prompts import SYSTEM_MESSAGE
 from azure_openai import get_completion_from_messages
 import json
+import io , os
+import base64
 
 # SQL Connection String
 # connection_string = "Driver={ODBC Driver 18 for SQL Server};Server=sql-smartresearch-sb.database.windows.net,1433;Database=SmartResearch;Uid=test;Pwd=3edc#EDC4rfv;Encrypt=yes;TrustServerCertificate=no;Connection Timeout=30;Authentication=SqlPassword"
 
+# ODBC Driver 17 Connection String 
 # connection_string = (
 #     "Driver={ODBC Driver 17 for SQL Server};"
 #     "Server=sql-smartresearch-sb.database.windows.net,1433;"
@@ -47,15 +50,6 @@ def init_connection():
     )
     return pyodbc.connect(connection_string)
 
-# def query_database(query, conn):
-#     cursor = conn.cursor()
-#     cursor.execute(query)
-#     data = cursor.fetchall()
-#     st.write(data)
-#     columns = [desc[0] for desc in cursor.description]
-#     return pd.DataFrame(data, columns=columns)
-
-
 def query_database(query, conn):
     cursor = conn.cursor()
     cursor.execute(query)
@@ -69,7 +63,8 @@ def query_database(query, conn):
     return df
 
 
-#conn = create_connection()
+#conn = create_connection() # For SQL Alchemy or other ..
+
 conn = init_connection()
 
 # Debug: print connection type and value
@@ -101,6 +96,48 @@ if conn:
                 sql_results = query_database(query_value, conn)
                 st.write("Query Results:")
                 st.dataframe(sql_results)
+                
+                # available file formats
+                file_formats = ["CSV", "Excel", "PDF"]
+                
+                
+                selected_format = st.selectbox("Select a file format to download:", file_formats)
+                
+                # download button by format
+                if selected_format == "CSV":
+                        csv = sql_results.to_csv(index=False)
+                        b64_csv = base64.b64encode(csv.encode()).decode()  # encode to base64
+                        st.download_button(
+                            label='Download CSV File',
+                            data=b64_csv,
+                            file_name='csv_query_results.csv',
+                            mime='text/csv'
+                        )
+                    
+                elif selected_format == "Excel":
+                    towrite = io.BytesIO()
+                    sql_results.to_excel(towrite, index=False, engine='openpyxl')
+                    towrite.seek(0)
+                    st.download_button(
+                        label='Download Excel File',
+                        data=towrite,
+                        file_name='excel_query_results.xlsx',
+                        mime='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+                    )
+                    
+                elif selected_format == "PDF":
+                    pdf_file_path = "query_results.pdf"
+                    sql_results.to_html('temp.html')
+                    os.system(f'wkhtmltopdf temp.html {pdf_file_path}')
+                    os.remove('temp.html')
+                    with open(pdf_file_path, "rb") as f:
+                        st.download_button(
+                            label='Download PDF File',
+                            data=f,
+                            file_name='pdf_query_results.pdf',
+                            mime='application/pdf'
+                        )
+                    os.remove(pdf_file_path)
                 
             except Exception as e:
                 st.write(f"An error occurred: {e}")
