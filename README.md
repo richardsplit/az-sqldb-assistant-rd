@@ -22,12 +22,13 @@ This project showcases the capabilities of combining OpenAI's GPT-4 with Streaml
 
 - Python 3.6 or above
 - Virtual Environment (recommended)
+- wkhtmltopdf installed on your machine for hosting the app
 
 ## Installation
 
 1. **Clone the Repository**:
     ```bash
-    git clone https://github.com/NikhilSehgal123/Azure-OpenAI-SQL.git
+   git clone https://github.com/richardsplit/az-sqldb-assistant-rd.git
     ```
 
 2. **Set up a Virtual Environment** (optional but recommended):
@@ -43,7 +44,11 @@ This project showcases the capabilities of combining OpenAI's GPT-4 with Streaml
 
 4. **Set up Environment Variables**:
    
-   If you're using any external services like Azure or APIs, make sure you have the credentials set up as environment variables or stored safely.
+   If you're using any external services like Azure or APIs, make sure you have proper rights/permissions .
+   - Apps is using SQL User with Access to DB as owner
+
+   If you are going to host the project version app on streamlit .
+    - Make sure to have the ip of the streamlit provisioned machine to your Azure SQL DB   
 
 ## Usage
 
@@ -54,9 +59,9 @@ This project showcases the capabilities of combining OpenAI's GPT-4 with Streaml
 
 2. Open the displayed URL in your browser, usually `http://localhost:8501`.
 
-3. Type in your natural language query into the input box, like "Show me all expenses greater than 1000".
+3. Type in your natural language query into the input box, like "Show me all transactions and transaction timestamp for this month".
 
-4. View the generated SQL query and the results from the database.
+4. View the generated SQL Server specific query and the results from the database.
 
 ## How It Works
 
@@ -66,7 +71,7 @@ This project showcases the capabilities of combining OpenAI's GPT-4 with Streaml
 
 2. **Schema Retrieval**:
 
-   Before generating a query, the system retrieves the schema of the table from SQLite to understand its structure.
+   Before generating a query, the system retrieves the schema of the table from SQL Server DB to understand its structure.
 
 3. **GPT-4 Model**:
 
@@ -74,11 +79,7 @@ This project showcases the capabilities of combining OpenAI's GPT-4 with Streaml
 
 4. **Query Execution**:
 
-   The app then executes the generated SQL query on the SQLite database and retrieves the results.
-
-## Contributing
-
-Feel free to fork this repository, create a feature branch, and submit a pull request if you have improvements or fixes you'd like to share.
+   The app then executes the generated SQL query on the SQL Server database and retrieves the results.
 
 ## License
 
