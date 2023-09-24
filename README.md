@@ -65,7 +65,7 @@ This project showcases the capabilities of combining OpenAI's GPT-4 with Streaml
 
 ## How It Works
 
-1. **SQLite Database**:
+1. **Azure SQL Database**:
 
    The app uses SQLite to create a table representing a company's finances. It holds fields like revenue, expenses, and profit.
 
