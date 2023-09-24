@@ -1,17 +1,26 @@
 import streamlit as st
-import sql_db
-from prompts.prompts import SYSTEM_MESSAGE
+from azure.core.credentials import AzureKeyCredential
+from azure.search.documents import SearchClient
+from azure_openai import get_openai_response  # This should be the method used to interact with OpenAI (ChatGPT).
 
-from azure_openai import get_completion_from_messages  # You should have a function like this from your existing logic.
+AZURE_SEARCH_URL = "https://srch-smartresearch-sb.search.windows.net"
+AZURE_SEARCH_INDEX = "test-azsqlasvectordb"
+AZURE_SEARCH_KEY = "LXGNAQfvGiDRifhWoMDh5xI5z9KvMtxpUFbJdFcrR0AzSeABub2D"
+
+search_client = SearchClient(AZURE_SEARCH_URL, AZURE_SEARCH_INDEX, AzureKeyCredential(AZURE_SEARCH_KEY))
 
 def run_search_and_chat():
     st.title("Chat and Search Assistant")
-    
-    schemas = sql_db.get_schema_representation  # Fetching the schema representation
-    formatted_system_message = SYSTEM_MESSAGE.format(schema=schemas)  # Generating the formatted system message
-    
+
     user_input = st.text_input("Enter your message or search query:")
     if user_input:
-        response = get_completion_from_messages(formatted_system_message, user_input)
-        st.write("Response:")
-        st.write(response)
+        if "search:" in user_input.lower():  # If the user wants to perform a search
+            search_query = user_input.replace("search:", "").strip()
+            results = search_client.search(search_query)
+            st.write("Search Results:")
+            for result in results:
+                st.write(result)
+        else:  # Else it's considered a chat message
+            response = get_openai_response(user_input)
+            st.write("Response:")
+            st.write(response)
