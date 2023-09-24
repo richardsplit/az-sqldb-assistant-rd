@@ -6,5 +6,4 @@ sqlalchemy
 pyodbc
 pymssql
 openpyxl
-azure-core azure-search-documents
-azure.core credentials
+azure-core azure-search-documents,credentials
