@@ -21,6 +21,19 @@ headers = {
 # Initialize OpenAI API with your API Key
 openai.api_key = '8b1955bb34a2499d99c48f024fac82f8'
 
+def fetch_company_names():
+    url = f"{AZURE_SEARCH_URL}/indexes/{INDEX_NAME}/docs?api-version={API_VERSION}&$select=company_name"
+    headers = {'api-key': AZURE_SEARCH_KEY}
+    response = requests.get(url, headers=headers)
+    response.raise_for_status()  # Check if request was successful
+    
+    results = response.json().get('value', [])
+    return [result['company_name'] for result in results]
+
+# Fetch company names at the startup and store in a list
+company_names_list = fetch_company_names()
+
+
 def generate_summary(result):
     company_name = result.get('company_name', 'Unknown Company')
     marketing_class_description = result.get('marketingClass_Description', 'N/A')
@@ -49,8 +62,15 @@ def generate_summary(result):
     return response.choices[0].text.strip()
 
 def run_search_and_chat():
-    st.title("Chat and Search Assistant")
-    user_input = st.text_input("Enter your message or search query:")
+  
+  st.title("Chat and Search Assistant")
+    
+  user_input = st.text_input("Start typing your message or search query:")
+  if user_input:
+    suggestions = [name for name in company_names_list if user_input.lower() in name.lower()]
+    selected_suggestion = st.selectbox('Did you mean:', suggestions, key='selectbox')
+    if st.button('Search'):
+        user_input = selected_suggestion
     
     if user_input:
         try:
