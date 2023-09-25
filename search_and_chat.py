@@ -14,7 +14,10 @@ def run_search_and_chat():
     user_input = st.text_input("Enter your message or search query:")
     
     if user_input:
+        st.write("User Input received")  # Debugging statement
+        
         if "search:" in user_input.lower():  # Perform a search
+            st.write("Search block entered")  # Debugging statement
             search_query = user_input.replace("search:", "").strip()
             results = search_client.search(search_query)
             
@@ -28,6 +31,7 @@ def run_search_and_chat():
                 st.write("---")
                 
         else:  # Interact with OpenAI
+            st.write("Else block entered")  # Debugging statement
             response = get_completion_from_messages_usr(user_input)
             st.write("Response:")
             st.write(response)
