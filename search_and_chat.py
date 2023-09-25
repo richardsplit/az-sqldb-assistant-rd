@@ -31,14 +31,13 @@ def run_search_and_chat():
             }
             response = requests.post(url, headers=headers, data=json.dumps(payload))
             response.raise_for_status()  # Check if request was successful
+
             results_list = response.json().get('value', [])
             
         except requests.RequestException as e:
             st.error(f"An error occurred: {e}")
             return
         
-        st.write("results_list:")
-        st.write(results_list)
         if results_list:  # If there are results from Azure Cognitive Search
             st.write("Search Results:")
             for result in results_list:
