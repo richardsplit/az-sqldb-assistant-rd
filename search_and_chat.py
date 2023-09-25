@@ -1,7 +1,7 @@
 import streamlit as st
 from azure.core.credentials import AzureKeyCredential
 from azure.search.documents import SearchClient
-from azure_openai import get_completion_from_messages_usr  # This should be the method used to interact with OpenAI (ChatGPT).
+from azure_openai import get_completion_from_messages_usr  
 
 AZURE_SEARCH_URL = "https://srch-smartresearch-sb.search.windows.net"
 AZURE_SEARCH_INDEX = "test-azsqlasvectordb"
