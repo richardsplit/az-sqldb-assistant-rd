@@ -23,17 +23,19 @@ headers = {
 # Initialize OpenAI API with your API Key
 openai.api_key = '8b1955bb34a2499d99c48f024fac82f8'
 
-def generate_summary_with_bert(result):
-    model = Summarizer()
-    
-    info_string = f"Company Name: {result.get('company_name', 'Unknown Company')}, " \
-                  f"Marketing Class Description: {result.get('marketingClass_Description', 'N/A')}, " \
-                  f"Net Income: {result.get('netIncome', 'N/A')}, " \
-                  f"Market Cap: {result.get('marketCap', 'N/A')}."
-    
-    summary = model(info_string)
-    return summary
+def generate_summary_with_gpt(result):
+    company_name = result.get('company_name', 'Unknown Company')
+    marketing_class_description = result.get('marketingClass_Description', 'N/A')
+    net_income = result.get('netIncome', 'N/A')
+    market_cap = result.get('marketCap', 'N/A')
 
+    # Construct a more natural language prompt for GPT
+    prompt = f"Can you summarize the information about {company_name} which has a marketing class described as {marketing_class_description}, a net income of {net_income}, and a market cap of {market_cap}?"
+
+    # Fetch response from GPT
+    summary = get_completion_from_messages_usr(prompt)
+    
+    return summary
 
 def run_search_and_chat():
     st.title("Chat and Search Assistant")
@@ -58,7 +60,7 @@ def run_search_and_chat():
         if results_list:  # If there are results from Azure Cognitive Search
             st.write("Search Results:")
             for result in results_list:
-                summary = generate_summary_with_bert(result)
+                summary = generate_summary_with_gpt(result)
                 st.write(f"ID: {result['id']}")
                 st.write(f"Company Name: {result['company_name']}")
                 st.write(f"Marketing Class Description: {result['marketingClass_Description']}")
