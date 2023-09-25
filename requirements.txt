@@ -8,3 +8,4 @@ pymssql
 openpyxl
 azure-core
 azure-search-documents
+requests

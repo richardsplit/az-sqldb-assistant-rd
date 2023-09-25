@@ -1,13 +1,15 @@
 import streamlit as st
-from azure.core.credentials import AzureKeyCredential
-from azure.search.documents import SearchClient
+import requests
+import json
 from azure_openai import get_completion_from_messages_usr
 
-AZURE_SEARCH_URL = "https://srch-smartresearch-sb.search.windows.net"
-AZURE_SEARCH_INDEX = "aclcompanylistone"
+AZURE_SEARCH_URL = "https://srch-smartresearch-sb.search.windows.net/indexes/aclcompanylistone/docs/search?api-version=2020-06-30"
 AZURE_SEARCH_KEY = "LXGNAQfvGiDRifhWoMDh5xI5z9KvMtxpUFbJdFcrR0AzSeABub2D"
 
-search_client = SearchClient(AZURE_SEARCH_URL, AZURE_SEARCH_INDEX, AzureKeyCredential(AZURE_SEARCH_KEY))
+headers = {
+    'Content-Type': 'application/json',
+    'api-key': AZURE_SEARCH_KEY,
+}
 
 def run_search_and_chat():
     st.title("Chat and Search Assistant")
@@ -16,10 +18,15 @@ def run_search_and_chat():
     if user_input:
         try:
             # Assume every input as a search query initially
-            results = search_client.search(user_input)
-            results_list = [result for result in results]  # Convert search results to a list
+            payload = {
+                "search": user_input,
+                "count": True,
+            }
+            response = requests.post(AZURE_SEARCH_URL, headers=headers, data=json.dumps(payload))
+            response.raise_for_status()  # Check if request was successful
+            results_list = response.json().get('value', [])
             
-        except Exception as e:
+        except requests.RequestException as e:
             st.error(f"An error occurred: {e}")
             return
         
@@ -39,3 +46,4 @@ def run_search_and_chat():
             response = get_completion_from_messages_usr(user_input)
             st.write("Response:")
             st.write(response)
+
