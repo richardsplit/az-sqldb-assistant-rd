@@ -10,4 +10,5 @@ azure-core
 azure-search-documents
 requests
 nltk
+torch
 bert-extractive-summarizer
