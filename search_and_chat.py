@@ -14,15 +14,14 @@ def run_search_and_chat():
     user_input = st.text_input("Enter your message or search query:")
     
     if user_input:
-        st.write("User Input received")  # Debugging statement
+        # Assume every input as a search query initially
+        results = search_client.search(user_input)
         
-        if "search:" in user_input.lower():  # Perform a search
-            st.write("Search block entered")  # Debugging statement
-            search_query = user_input.replace("search:", "").strip()
-            results = search_client.search(search_query)
-            
+        results_list = [result for result in results]  # Convert search results to a list
+        
+        if results_list:  # If there are results from Azure Cognitive Search
             st.write("Search Results:")
-            for result in results:
+            for result in results_list:
                 st.write(f"ID: {result['id']}")
                 st.write(f"Company Name: {result['company_name']}")
                 st.write(f"Marketing Class Description: {result['marketingClass_Description']}")
@@ -30,8 +29,7 @@ def run_search_and_chat():
                 st.write(f"Market Cap: {result['marketCap']}")
                 st.write("---")
                 
-        else:  # Interact with OpenAI
-            st.write("Else block entered")  # Debugging statement
+        else:  # If no results from Azure Cognitive Search, interact with OpenAI
             response = get_completion_from_messages_usr(user_input)
             st.write("Response:")
             st.write(response)
