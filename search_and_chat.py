@@ -1,6 +1,8 @@
 import streamlit as st
 import requests
 import json
+import openai  # Ensure you have OpenAI Python package installed
+
 from azure_openai import get_completion_from_messages_usr
 
 AZURE_SEARCH_URL = "https://srch-smartresearch-sb.search.windows.net"
@@ -16,7 +18,31 @@ headers = {
     'api-key': AZURE_SEARCH_KEY,
 }
 
+# Initialize OpenAI API with your API Key
+openai.api_key = '8b1955bb34a2499d99c48f024fac82f8'
 
+def generate_summary(result):
+    company_name = result.get('company_name', 'Unknown Company')
+    marketing_class_description = result.get('marketingClass_Description', 'N/A')
+    net_income = result.get('netIncome', 'N/A')
+    market_cap = result.get('marketCap', 'N/A')
+
+    # Construct a prompt from the structured data
+    prompt = f"Generate a human-readable summary for the following information: " \
+             f"Company Name: {company_name}, " \
+             f"Marketing Class Description: {marketing_class_description}, " \
+             f"Net Income: {net_income}, " \
+             f"Market Cap: {market_cap}."
+
+    # Generate a response from OpenAI's API
+    response = openai.Completion.create(
+        engine="davinci-codex",  # or "davinci", based on your requirement
+        prompt=prompt,
+        temperature=0.6,
+        max_tokens=100
+    )
+
+    return response.choices[0].text.strip()
 
 def run_search_and_chat():
     st.title("Chat and Search Assistant")

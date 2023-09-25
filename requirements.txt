@@ -9,3 +9,4 @@ openpyxl
 azure-core
 azure-search-documents
 requests
+nltk
