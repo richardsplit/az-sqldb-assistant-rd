@@ -21,28 +21,24 @@ headers = {
 # Initialize OpenAI API with your API Key
 openai.api_key = '8b1955bb34a2499d99c48f024fac82f8'
 
-def generate_summary(result):
+def generate_summary_with_gpt(result):
     company_name = result.get('company_name', 'Unknown Company')
     marketing_class_description = result.get('marketingClass_Description', 'N/A')
     net_income = result.get('netIncome', 'N/A')
     market_cap = result.get('marketCap', 'N/A')
 
-    # Construct a prompt from the structured data
-    prompt = f"Generate a human-readable summary for the following information: " \
+    # Construct a prompt from the structured data for GPT
+    prompt = f"Provide a concise summary for the following details: " \
              f"Company Name: {company_name}, " \
              f"Marketing Class Description: {marketing_class_description}, " \
              f"Net Income: {net_income}, " \
              f"Market Cap: {market_cap}."
 
-    # Generate a response from OpenAI's API
-    response = openai.Completion.create(
-        engine="davinci-codex",  # or "davinci", based on your requirement
-        prompt=prompt,
-        temperature=0.6,
-        max_tokens=100
-    )
+    # Fetch response from GPT
+    summary = get_completion_from_messages_usr(prompt)
+    
+    return summary
 
-    return response.choices[0].text.strip()
 
 def run_search_and_chat():
     st.title("Chat and Search Assistant")
@@ -67,7 +63,7 @@ def run_search_and_chat():
         if results_list:  # If there are results from Azure Cognitive Search
             st.write("Search Results:")
             for result in results_list:
-                summary = generate_summary(result)
+                summary = get_completion_from_messages_usr(result)
                 st.write(f"ID: {result['id']}")
                 st.write(f"Company Name: {result['company_name']}")
                 st.write(f"Marketing Class Description: {result['marketingClass_Description']}")
