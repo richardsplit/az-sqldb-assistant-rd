@@ -16,6 +16,8 @@ headers = {
     'api-key': AZURE_SEARCH_KEY,
 }
 
+
+
 def run_search_and_chat():
     st.title("Chat and Search Assistant")
     user_input = st.text_input("Enter your message or search query:")
@@ -27,7 +29,7 @@ def run_search_and_chat():
                 "search": user_input,
                 "count": True,
             }
-            response = requests.post(AZURE_SEARCH_URL, headers=headers, data=json.dumps(payload))
+            response = requests.post(url, headers=headers, data=json.dumps(payload))
             response.raise_for_status()  # Check if request was successful
             results_list = response.json().get('value', [])
             
