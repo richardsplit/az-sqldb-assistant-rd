@@ -14,13 +14,13 @@ def run_search_and_chat():
 
     user_input = st.text_input("Enter your message or search query:")
     if user_input:
-        if "search:" in user_input.lower():  # If the user wants to perform a search
+        if "search:" in user_input.lower():  # perform a search
             search_query = user_input.replace("search:", "").strip()
             results = search_client.search(search_query)
             st.write("Search Results:")
             for result in results:
                 st.write(result)
-        else:  # Else it's considered a chat message
+        else:  
             response = get_completion_from_messages_usr(user_input)
             st.write("Response:")
             st.write(response)
