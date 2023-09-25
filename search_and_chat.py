@@ -3,8 +3,13 @@ import requests
 import json
 from azure_openai import get_completion_from_messages_usr
 
-AZURE_SEARCH_URL = "https://srch-smartresearch-sb.search.windows.net/indexes/aclcompanylistone/docs/search?api-version=2020-06-30"
+AZURE_SEARCH_URL = "https://srch-smartresearch-sb.search.windows.net"
+INDEX_NAME = "aclcompanylistone"
+API_VERSION = "2020-06-30"
 AZURE_SEARCH_KEY = "LXGNAQfvGiDRifhWoMDh5xI5z9KvMtxpUFbJdFcrR0AzSeABub2D"
+
+# Construct the URL for the search request
+url = f"{AZURE_SEARCH_URL}/indexes/{INDEX_NAME}/docs/search?api-version={API_VERSION}"
 
 headers = {
     'Content-Type': 'application/json',
