@@ -18,7 +18,8 @@ def run_search_and_chat():
         results = search_client.search(user_input)
         
         results_list = [result for result in results]  # Convert search results to a list
-        
+        st.write("results_list:")
+        st.write(results_list)
         if results_list:  # If there are results from Azure Cognitive Search
             st.write("Search Results:")
             for result in results_list:
