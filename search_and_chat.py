@@ -2,8 +2,6 @@ import streamlit as st
 import requests
 import json
 import openai  # Ensure you have OpenAI Python package installed
-from summarizer import Summarizer
-
 
 from azure_openai import get_completion_from_messages_usr
 
@@ -23,19 +21,32 @@ headers = {
 # Initialize OpenAI API with your API Key
 openai.api_key = '8b1955bb34a2499d99c48f024fac82f8'
 
-def generate_summary_with_gpt(result):
+def generate_summary(result):
     company_name = result.get('company_name', 'Unknown Company')
     marketing_class_description = result.get('marketingClass_Description', 'N/A')
     net_income = result.get('netIncome', 'N/A')
     market_cap = result.get('marketCap', 'N/A')
 
-    # Construct a more natural language prompt for GPT
-    prompt = f"Can you summarize the information about {company_name} which has a marketing class described as {marketing_class_description}, a net income of {net_income}, and a market cap of {market_cap}?"
+    # Construct a prompt from the structured data
+    prompt = f"Generate a human-readable summary for the following information: " \
+             f"Company Name: {company_name}, " \
+             f"Marketing Class Description: {marketing_class_description}, " \
+             f"Net Income: {net_income}, " \
+             f"Market Cap: {market_cap}."
 
-    # Fetch response from GPT
-    summary = get_completion_from_messages_usr(prompt)
-    
-    return summary
+    # Generate a response from OpenAI's API
+    try:
+        response = openai.Completion.create(
+            engine="chatgpt-4",  # Replace with the correct identifier for ChatGPT-4
+            prompt=prompt,
+            temperature=0.6,
+            max_tokens=100
+        )
+    except openai.error.OpenAIError as e:
+        st.error(f"Error interacting with OpenAI API: {str(e)}")
+        return "An error occurred while generating summary."
+
+    return response.choices[0].text.strip()
 
 def run_search_and_chat():
     st.title("Chat and Search Assistant")
@@ -60,7 +71,7 @@ def run_search_and_chat():
         if results_list:  # If there are results from Azure Cognitive Search
             st.write("Search Results:")
             for result in results_list:
-                summary = generate_summary_with_gpt(result)
+                summary = generate_summary(result)
                 st.write(f"ID: {result['id']}")
                 st.write(f"Company Name: {result['company_name']}")
                 st.write(f"Marketing Class Description: {result['marketingClass_Description']}")
