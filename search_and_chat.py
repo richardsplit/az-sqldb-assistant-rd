@@ -2,6 +2,7 @@ import streamlit as st
 import requests
 import json
 import openai  # Ensure you have OpenAI Python package installed
+from summarizer import Summarizer
 
 from azure_openai import get_completion_from_messages_usr
 
@@ -34,32 +35,16 @@ def fetch_company_names():
 company_names_list = fetch_company_names()
 
 
-def generate_summary(result):
-    company_name = result.get('company_name', 'Unknown Company')
-    marketing_class_description = result.get('marketingClass_Description', 'N/A')
-    net_income = result.get('netIncome', 'N/A')
-    market_cap = result.get('marketCap', 'N/A')
-
-    # Construct a prompt from the structured data
-    prompt = f"Generate a human-readable summary for the following information: " \
-             f"Company Name: {company_name}, " \
-             f"Marketing Class Description: {marketing_class_description}, " \
-             f"Net Income: {net_income}, " \
-             f"Market Cap: {market_cap}."
-
-    # Generate a response from OpenAI's API
-    try:
-        response = openai.Completion.create(
-            engine="chatgpt-4",  # Replace with the correct identifier for ChatGPT-4
-            prompt=prompt,
-            temperature=0.6,
-            max_tokens=100
-        )
-    except openai.error.OpenAIError as e:
-        st.error(f"Error interacting with OpenAI API: {str(e)}")
-        return "An error occurred while generating summary."
-
-    return response.choices[0].text.strip()
+def generate_summary_with_bert(result):
+    model = Summarizer()
+    
+    info_string = f"Company Name: {result.get('company_name', 'Unknown Company')}, " \
+                  f"Marketing Class Description: {result.get('marketingClass_Description', 'N/A')}, " \
+                  f"Net Income: {result.get('netIncome', 'N/A')}, " \
+                  f"Market Cap: {result.get('marketCap', 'N/A')}."
+    
+    summary = model(info_string)
+    return summary
 
 def run_search_and_chat():
   
@@ -91,7 +76,7 @@ def run_search_and_chat():
         if results_list:  # If there are results from Azure Cognitive Search
             st.write("Search Results:")
             for result in results_list:
-                summary = generate_summary(result)
+                summary = generate_summary_with_bert(result)
                 st.write(f"ID: {result['id']}")
                 st.write(f"Company Name: {result['company_name']}")
                 st.write(f"Marketing Class Description: {result['marketingClass_Description']}")
