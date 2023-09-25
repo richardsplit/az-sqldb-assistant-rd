@@ -14,10 +14,15 @@ def run_search_and_chat():
     user_input = st.text_input("Enter your message or search query:")
     
     if user_input:
-        # Assume every input as a search query initially
-        results = search_client.search(user_input)
+        try:
+            # Assume every input as a search query initially
+            results = search_client.search(user_input)
+            results_list = [result for result in results]  # Convert search results to a list
+            
+        except Exception as e:
+            st.error(f"An error occurred: {e}")
+            return
         
-        results_list = [result for result in results]  # Convert search results to a list
         st.write("results_list:")
         st.write(results_list)
         if results_list:  # If there are results from Azure Cognitive Search
