@@ -10,3 +10,4 @@ azure-core
 azure-search-documents
 requests
 nltk
+bert-extractive-summarizer
