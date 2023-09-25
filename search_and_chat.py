@@ -58,7 +58,7 @@ def run_search_and_chat():
         if results_list:  # If there are results from Azure Cognitive Search
             st.write("Search Results:")
             for result in results_list:
-                summary = get_completion_from_messages_usr(result)
+                summary = generate_summary_with_bert(result)
                 st.write(f"ID: {result['id']}")
                 st.write(f"Company Name: {result['company_name']}")
                 st.write(f"Marketing Class Description: {result['marketingClass_Description']}")
