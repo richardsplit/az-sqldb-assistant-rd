@@ -2,6 +2,8 @@ import streamlit as st
 import requests
 import json
 import openai  # Ensure you have OpenAI Python package installed
+from summarizer import Summarizer
+
 
 from azure_openai import get_completion_from_messages_usr
 
@@ -21,22 +23,15 @@ headers = {
 # Initialize OpenAI API with your API Key
 openai.api_key = '8b1955bb34a2499d99c48f024fac82f8'
 
-def generate_summary_with_gpt(result):
-    company_name = result.get('company_name', 'Unknown Company')
-    marketing_class_description = result.get('marketingClass_Description', 'N/A')
-    net_income = result.get('netIncome', 'N/A')
-    market_cap = result.get('marketCap', 'N/A')
-
-    # Construct a prompt from the structured data for GPT
-    prompt = f"Provide a concise summary for the following details: " \
-             f"Company Name: {company_name}, " \
-             f"Marketing Class Description: {marketing_class_description}, " \
-             f"Net Income: {net_income}, " \
-             f"Market Cap: {market_cap}."
-
-    # Fetch response from GPT
-    summary = get_completion_from_messages_usr(prompt)
+def generate_summary_with_bert(result):
+    model = Summarizer()
     
+    info_string = f"Company Name: {result.get('company_name', 'Unknown Company')}, " \
+                  f"Marketing Class Description: {result.get('marketingClass_Description', 'N/A')}, " \
+                  f"Net Income: {result.get('netIncome', 'N/A')}, " \
+                  f"Market Cap: {result.get('marketCap', 'N/A')}."
+    
+    summary = model(info_string)
     return summary
 
 
