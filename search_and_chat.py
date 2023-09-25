@@ -4,7 +4,7 @@ from azure.search.documents import SearchClient
 from azure_openai import get_completion_from_messages_usr  
 
 AZURE_SEARCH_URL = "https://srch-smartresearch-sb.search.windows.net"
-AZURE_SEARCH_INDEX = "test-azsqlasvectordb"
+AZURE_SEARCH_INDEX = "aclcompanylistone"
 AZURE_SEARCH_KEY = "LXGNAQfvGiDRifhWoMDh5xI5z9KvMtxpUFbJdFcrR0AzSeABub2D"
 
 search_client = SearchClient(AZURE_SEARCH_URL, AZURE_SEARCH_INDEX, AzureKeyCredential(AZURE_SEARCH_KEY))
